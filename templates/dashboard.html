@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block title %}Кабинет — Finora{% endblock %}
+{% block content %}<div class="card"><h1>Личный кабинет</h1><p>Добро пожаловать, <strong>{{ current_user.username }}</strong>!</p><div class="grid"><div class="stat"><h3>Баланс</h3><div class="amount">{{ balance }} ₽</div></div><div class="stat"><h3>Доходы</h3><div class="amount income">{{ income }} ₽</div></div><div class="stat"><h3>Расходы</h3><div class="amount expense">{{ expense }} ₽</div></div></div></div>{% endblock %}
