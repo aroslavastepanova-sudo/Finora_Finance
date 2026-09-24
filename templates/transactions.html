@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Операции{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>История операций</h1>
+
+    <div class="actions">
+        <a class="button" href="{{ url_for('add_transaction') }}">+ Добавить</a>
+    </div>
+
+    {% if transactions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Название</th>
+                    <th>Категория</th>
+                    <th>Тип</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in transactions %}
+                    <tr>
+                        <td>{{ item.transaction_date.strftime('%d.%m.%Y') }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.category.name if item.category else '—' }}</td>
+                        <td>{{ 'Доход' if item.transaction_type == 'income' else 'Расход' }}</td>
+                        <td class="{{ item.transaction_type }}">
+                            {{ '%.2f'|format(item.amount) }} ₽
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Операций пока нет.</p>
+    {% endif %}
+</div>
+{% endblock %}
