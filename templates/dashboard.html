@@ -1,22 +1,88 @@
 {% extends "base.html" %}
-
-{% block title %}Кабинет{% endblock %}
-
+{% block title %}Главная — Finora{% endblock %}
 {% block content %}
-<div class="card">
-    <h1>Кабинет</h1>
-
-    <p>
-        Пользователь: <strong>{{ current_user.username }}</strong>
-    </p>
-
-    <p>
-        Добавлено операций: <strong>{{ transactions|length }}</strong>
-    </p>
-
-    <div class="actions">
-        <a class="button" href="{{ url_for('add_transaction') }}">Добавить операцию</a>
-        <a class="button secondary" href="{{ url_for('transactions') }}">История</a>
+<header class="topbar">
+    <div>
+        <p class="eyebrow">ФИНАНСЫ ЗА СЕГОДНЯ</p>
+        <h1>Привет, {{ current_user.name }}! <span class="wave">👋</span></h1>
+        <p class="muted">Пусть твои финансы работают на твои мечты</p>
     </div>
+    <a class="avatar avatar-large" href="{{ url_for('profile') }}">{{ current_user.name[:1]|upper }}</a>
+</header>
+
+<section class="stats-grid">
+    <article class="balance-card">
+        <div class="card-label">Общий баланс <span class="eye">◉</span></div>
+        <div class="balance">{{ "{:,.2f}".format(balance).replace(",", " ") }} {{ currency_symbol(current_user.profile.currency) }}</div>
+        <div class="balance-note">Текущий доступный остаток</div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-icon income-icon">↗</div>
+        <div><span>Доходы</span><strong>+{{ "{:,.2f}".format(income).replace(",", " ") }} {{ currency_symbol(current_user.profile.currency) }}</strong></div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-icon expense-icon">↘</div>
+        <div><span>Расходы</span><strong>-{{ "{:,.2f}".format(expenses).replace(",", " ") }} {{ currency_symbol(current_user.profile.currency) }}</strong></div>
+    </article>
+</section>
+
+<div class="dashboard-grid">
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Расходы по категориям</h2>
+                <p class="muted">Распределение всех расходов</p>
+            </div>
+            <a href="{{ url_for('transactions') }}">Все операции →</a>
+        </div>
+
+        {% if category_stats %}
+        <div class="category-list">
+            {% for item in category_stats %}
+            <div class="category-row">
+                <div class="category-info">
+                    <span>{{ item.name }}</span>
+                    <strong>{{ item.percent }}%</strong>
+                </div>
+                <div class="progress"><span style="width: {{ item.percent }}%"></span></div>
+                <small>{{ "{:,.2f}".format(item.total).replace(",", " ") }} {{ currency_symbol(current_user.profile.currency) }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <div class="empty-state">Добавьте первую расходную операцию, чтобы увидеть статистику.</div>
+        {% endif %}
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Последние операции</h2>
+                <p class="muted">Самые свежие записи</p>
+            </div>
+            <a href="{{ url_for('transactions') }}">Все →</a>
+        </div>
+
+        <div class="transaction-list">
+        {% for item in recent %}
+            <div class="transaction-item">
+                <div class="transaction-icon">{{ item.category.icon }}</div>
+                <div class="transaction-main">
+                    <strong>{{ item.title }}</strong>
+                    <small>{{ item.category.name }} · {{ item.transaction_date.strftime('%d.%m.%Y') }}</small>
+                </div>
+                <strong class="{{ 'positive' if item.transaction_type == 'income' else 'negative' }}">
+                    {{ '+' if item.transaction_type == 'income' else '-' }}{{ "{:,.2f}".format(item.amount).replace(",", " ") }} {{ currency_symbol(current_user.profile.currency) }}
+                </strong>
+            </div>
+        {% else %}
+            <div class="empty-state">Пока нет операций.</div>
+        {% endfor %}
+        </div>
+
+        <a class="btn btn-primary btn-full add-button" href="{{ url_for('add_transaction') }}">+ Добавить операцию</a>
+    </section>
 </div>
 {% endblock %}

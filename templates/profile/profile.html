@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Профиль — Finora{% endblock %}
+{% block content %}
+<header class="page-heading">
+    <div>
+        <p class="eyebrow">НАСТРОЙКИ</p>
+        <h1>Создание профиля</h1>
+        <p class="muted">Настройте данные, чтобы персонализировать Finora</p>
+    </div>
+</header>
+
+<section class="profile-panel">
+    <div class="profile-progress">
+        <span class="progress-step active">1</span><i></i>
+        <span class="progress-step active">2</span><i></i>
+        <span class="progress-step">3</span>
+    </div>
+    <div class="progress-labels"><span>Личные данные</span><span>Финансовые цели</span><span>Готово</span></div>
+
+    <div class="profile-copy">
+        <h2>Расскажите немного о себе</h2>
+        <p>Эти данные помогут подготовить приложение под ваши финансовые цели.</p>
+    </div>
+
+    <form method="post" class="form-stack">
+        <label>Имя
+            <input name="name" type="text" value="{{ current_user.name }}" required>
+        </label>
+
+        <div class="two-columns">
+            <label>Дата рождения
+                <input name="birth_date" type="date" value="{{ current_user.profile.birth_date.isoformat() if current_user.profile.birth_date else '' }}">
+            </label>
+            <label>Пол
+                <select name="gender">
+                    <option value="">Не указывать</option>
+                    <option value="female" {{ 'selected' if current_user.profile.gender == 'female' }}>Женский</option>
+                    <option value="male" {{ 'selected' if current_user.profile.gender == 'male' }}>Мужской</option>
+                    <option value="other" {{ 'selected' if current_user.profile.gender == 'other' }}>Другое</option>
+                </select>
+            </label>
+        </div>
+
+        <label>Валюта
+            <select name="currency">
+                {% for code, label in [('RUB','₽ — Российский рубль'), ('USD','$ — Доллар США'), ('EUR','€ — Евро'), ('GBP','£ — Фунт стерлингов')] %}
+                <option value="{{ code }}" {{ 'selected' if current_user.profile.currency == code }}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>Ежемесячная финансовая цель
+            <input name="monthly_goal" type="number" min="0" step="0.01" value="{{ current_user.profile.monthly_goal }}">
+        </label>
+
+        <button class="btn btn-primary btn-full" type="submit">Сохранить профиль</button>
+    </form>
+</section>
+{% endblock %}

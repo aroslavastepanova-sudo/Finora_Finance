@@ -1,38 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Finora{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header class="navbar">
-        <div class="navbar-container">
-            <a class="logo" href="{{ url_for('index') }}">🌸 Finora</a>
-            <nav class="navigation">
-                <a href="{{ url_for('index') }}">Главная</a>
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('dashboard') }}">Кабинет</a>
-                    <a href="{{ url_for('transactions') }}">Операции</a>
-                    <a href="{{ url_for('add_transaction') }}">Добавить</a>
-                    <a href="{{ url_for('logout') }}">Выйти</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}">Войти</a>
-                    <a href="{{ url_for('register') }}">Регистрация</a>
-                {% endif %}
-            </nav>
+<div class="flower flower-one">✿</div>
+<div class="flower flower-two">❀</div>
+<div class="flower flower-three">✾</div>
+<div class="flower flower-four">❁</div>
+<div class="flower flower-five">✿</div>
+<div class="flower flower-six">❀</div>
+<div class="flower flower-seven">✾</div>
+
+<div class="sparkles" aria-hidden="true">
+    <span>✦</span><span>✧</span><span>⋆</span><span>✦</span><span>✧</span>
+    <span>⋆</span><span>✦</span><span>✧</span><span>⋆</span><span>✦</span>
+    <span>✧</span><span>⋆</span>
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+            <span class="brand-mark">⌁</span>
+            <span>Finora</span>
+        </a>
+
+        <nav class="nav">
+            <a class="{{ 'active' if request.endpoint == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}">
+                <span>⌂</span> Главная
+            </a>
+            <a class="{{ 'active' if request.endpoint in ['transactions', 'add_transaction'] else '' }}" href="{{ url_for('transactions') }}">
+                <span>▤</span> Операции
+            </a>
+            <a class="{{ 'active' if request.endpoint == 'profile' else '' }}" href="{{ url_for('profile') }}">
+                <span>♡</span> Профиль
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a class="user-mini" href="{{ url_for('profile') }}">
+                <span class="avatar">{{ current_user.name[:1]|upper }}</span>
+                <span>
+                    <strong>{{ current_user.name }}</strong>
+                    <small>{{ current_user.email }}</small>
+                </span>
+            </a>
+            <a class="logout" href="{{ url_for('logout') }}">Выйти</a>
         </div>
-    </header>
+    </aside>
 
-    <main class="main-container">
-        {% with messages = get_flashed_messages() %}
-            {% for message in messages %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
         {% endwith %}
-
         {% block content %}{% endblock %}
     </main>
+</div>
+{% else %}
+<main class="auth-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-stack auth-flashes">
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% block auth_content %}{% endblock %}
+</main>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Операции — Finora{% endblock %}
+{% block content %}
+<header class="page-heading">
+    <div>
+        <p class="eyebrow">ИСТОРИЯ</p>
+        <h1>Мои операции</h1>
+        <p class="muted">Поиск и фильтрация доходов и расходов</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('add_transaction') }}">+ Добавить операцию</a>
+</header>
+
+<form method="get" class="filter-panel">
+    <input name="search" value="{{ search }}" placeholder="Поиск по названию…">
+    <select name="type">
+        <option value="">Все типы</option>
+        <option value="income" {{ 'selected' if selected_type == 'income' }}>Доходы</option>
+        <option value="expense" {{ 'selected' if selected_type == 'expense' }}>Расходы</option>
+    </select>
+    <select name="category">
+        <option value="">Все категории</option>
+        {% for category in categories %}
+        <option value="{{ category.id }}" {{ 'selected' if selected_category == category.id|string }}>{{ category.name }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-soft" type="submit">Найти</button>
+</form>
+
+<section class="panel">
+    <div class="transaction-list transaction-list-large">
+    {% for item in transactions %}
+        <div class="transaction-item">
+            <div class="transaction-icon">{{ item.category.icon }}</div>
+            <div class="transaction-main">
+                <strong>{{ item.title }}</strong>
+                <small>{{ item.category.name }} · {{ item.transaction_date.strftime('%d.%m.%Y') }}{% if item.note %} · {{ item.note }}{% endif %}</small>
+            </div>
+            <strong class="{{ 'positive' if item.transaction_type == 'income' else 'negative' }}">
+                {{ '+' if item.transaction_type == 'income' else '-' }}{{ "{:,.2f}".format(item.amount).replace(",", " ") }} {{ currency_symbol(current_user.profile.currency) }}
+            </strong>
+            <form method="post" action="{{ url_for('delete_transaction', transaction_id=item.id) }}" onsubmit="return confirm('Удалить операцию?')">
+                <button class="icon-button danger" title="Удалить" type="submit">×</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">♡</div>
+            <h3>Ничего не найдено</h3>
+            <p>Измените параметры поиска или добавьте новую операцию.</p>
+        </div>
+    {% endfor %}
+    </div>
+</section>
+{% endblock %}

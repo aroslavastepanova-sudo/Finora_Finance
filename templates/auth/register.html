@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Регистрация — Finora{% endblock %}
+{% block auth_content %}
+<section class="auth-card">
+    <div class="auth-decoration">❀</div>
+    <div class="brand centered"><span class="brand-mark">⌁</span><span>Finora</span></div>
+    <p class="tagline">Твои деньги — твои цели</p>
+
+    <div class="auth-heading">
+        <h1>Создайте аккаунт</h1>
+        <p>Начните управлять своими финансами уже сегодня</p>
+    </div>
+
+    <form method="post" class="form-stack">
+        <label>Имя
+            <input name="name" type="text" placeholder="Как вас зовут?" value="{{ request.form.get('name', '') }}" required>
+        </label>
+        <label>Электронная почта
+            <input name="email" type="email" placeholder="you@example.com" value="{{ request.form.get('email', '') }}" required>
+        </label>
+        <label>Пароль
+            <input name="password" type="password" placeholder="Минимум 6 символов" required>
+        </label>
+        <label>Повторите пароль
+            <input name="password_repeat" type="password" placeholder="Повторите пароль" required>
+        </label>
+        <button class="btn btn-primary btn-full" type="submit">Зарегистрироваться</button>
+    </form>
+
+    <div class="divider"><span>или</span></div>
+    <a class="btn btn-outline btn-full" href="{{ url_for('login') }}">У меня уже есть аккаунт</a>
+</section>
+{% endblock %}

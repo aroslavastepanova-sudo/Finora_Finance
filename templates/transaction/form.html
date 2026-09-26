@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Новая операция — Finora{% endblock %}
+{% block content %}
+<header class="page-heading">
+    <div>
+        <p class="eyebrow">НОВАЯ ЗАПИСЬ</p>
+        <h1>Добавить операцию</h1>
+        <p class="muted">Зафиксируйте доход или расход</p>
+    </div>
+</header>
+
+<section class="form-panel">
+<form method="post" class="form-stack">
+    <div class="type-switch">
+        <label><input type="radio" name="transaction_type" value="expense" checked><span>Расход</span></label>
+        <label><input type="radio" name="transaction_type" value="income"><span>Доход</span></label>
+    </div>
+
+    <label>Название операции
+        <input name="title" type="text" placeholder="Например, Продукты" required>
+    </label>
+
+    <div class="two-columns">
+        <label>Сумма
+            <input name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required>
+        </label>
+        <label>Дата
+            <input name="transaction_date" type="date" value="{{ request.form.get('transaction_date', '') or '' }}" required>
+        </label>
+    </div>
+
+    <label>Категория
+        <select name="category_id" required>
+            <option value="">Выберите категорию</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.icon }} {{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>Комментарий
+        <textarea name="note" rows="4" placeholder="Необязательно"></textarea>
+    </label>
+
+    <div class="form-actions">
+        <a class="btn btn-outline" href="{{ url_for('transactions') }}">Отмена</a>
+        <button class="btn btn-primary" type="submit">Сохранить операцию</button>
+    </div>
+</form>
+</section>
+{% endblock %}
