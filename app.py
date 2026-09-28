@@ -264,7 +264,7 @@ def create_app():
     @app.route("/transactions")
     @login_required
     def transactions():
-        # GET parameters are used for search/filtering as required by the assignment.
+        
         search = request.args.get("search", "").strip()
         transaction_type = request.args.get("type", "").strip()
         category_id = request.args.get("category", "").strip()
