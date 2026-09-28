@@ -38,7 +38,7 @@ class User(UserMixin, db.Model):
     )
 
     def set_password(self, password):
-        # Werkzeug uses a salted password hash; the salt is stored as part of the hash.
+        
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
